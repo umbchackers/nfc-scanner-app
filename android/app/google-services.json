@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "162568594089",
+    "project_id": "hackumbc-2022",
+    "storage_bucket": "hackumbc-2022.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162568594089:android:d6fefaa45b4ef1ad807fb8",
+        "android_client_info": {
+          "package_name": "com.nfcscannerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162568594089-hqc8mvos34mp235pth33vaffmkj6lq58.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDoJpGeQo1atJzukF0G0uu8Byy9xJAjZsg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162568594089-hqc8mvos34mp235pth33vaffmkj6lq58.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
