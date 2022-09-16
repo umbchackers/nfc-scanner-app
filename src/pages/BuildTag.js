@@ -24,6 +24,7 @@ function BuildTag( {navigation, route} ) {
     const [foundOptions, setFoundOptions] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
     const [modalContent, setModalContent] = useState('');
+    const [confirmRewrite, setConfirmRewrite] = useState(true);
 
     function handleModal() {
         setModalContent('');
@@ -43,11 +44,11 @@ function BuildTag( {navigation, route} ) {
             .where('first', '==', queryFirstName.toLowerCase()).where('last', '==', queryLastName.toLowerCase()).where('email', '==', queryEmail.toLowerCase()).where('phone', '==', queryPhone)
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text ='Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -58,11 +59,11 @@ function BuildTag( {navigation, route} ) {
             .where('first', '==', queryFirstName.toLowerCase()).where('last', '==', queryLastName.toLowerCase()).where('email', '==', queryEmail.toLowerCase())
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -73,11 +74,11 @@ function BuildTag( {navigation, route} ) {
             .where('first', '==', queryFirstName.toLowerCase()).where('last', '==', queryLastName.toLowerCase()).where('phone', '==', queryPhone)
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -88,11 +89,11 @@ function BuildTag( {navigation, route} ) {
             .where('first', '==', queryFirstName.toLowerCase()).where('email', '==', queryEmail.toLowerCase()).where('phone', '==', queryPhone)
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -103,11 +104,11 @@ function BuildTag( {navigation, route} ) {
             .where('last', '==', queryLastName.toLowerCase()).where('email', '==', queryEmail.toLowerCase()).where('phone', '==', queryPhone)
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -118,11 +119,11 @@ function BuildTag( {navigation, route} ) {
             .where('first', '==', queryFirstName.toLowerCase()).where('last', '==', queryLastName.toLowerCase())
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -133,11 +134,11 @@ function BuildTag( {navigation, route} ) {
             .where('first', '==', queryFirstName.toLowerCase()).where('email', '==', queryEmail.toLowerCase())
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -148,11 +149,11 @@ function BuildTag( {navigation, route} ) {
             .where('first', '==', queryFirstName.toLowerCase()).where('phone', '==', queryPhone)
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -163,11 +164,11 @@ function BuildTag( {navigation, route} ) {
             .where('last', '==', queryLastName.toLowerCase()).where('email', '==', queryEmail.toLowerCase())
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -178,11 +179,11 @@ function BuildTag( {navigation, route} ) {
             .where('last', '==', queryLastName.toLowerCase()).where('phone', '==', queryPhone)
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -193,11 +194,11 @@ function BuildTag( {navigation, route} ) {
             .where('email', '==', queryEmail.toLowerCase()).where('phone', '==', queryPhone)
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -208,11 +209,11 @@ function BuildTag( {navigation, route} ) {
             .where('first', '==', queryFirstName.toLowerCase())
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -223,11 +224,11 @@ function BuildTag( {navigation, route} ) {
             .where('last', '==', queryLastName.toLowerCase())
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -238,11 +239,11 @@ function BuildTag( {navigation, route} ) {
             .where('email', '==', queryEmail.toLowerCase())
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -252,11 +253,11 @@ function BuildTag( {navigation, route} ) {
             .where('phone', '==', queryPhone)
             .get().then(collectionSnapshot => {
                 if(collectionSnapshot.size <= 15) {
-                    text = 'Found ' + collectionSnapshot.size + ' available users'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users'
                     setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
                     setModalContent(text);
                 } else {
-                    text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
                     setModalContent(text);
                 }
             })
@@ -267,14 +268,14 @@ function BuildTag( {navigation, route} ) {
 
     //firebase function
     function getNFCID(documentSnapshot) {
-        id = documentSnapshot.get('latestID');
+        var id = documentSnapshot.get('latestID');
         return id;
     }
 
     //firebase function
     function updateNewestID(id) {
-        result = false;
-        number = Number(id) + 1;
+        var result = false;
+        var number = Number(id) + 1;
         firestore()
             .collection('Tools')
             .doc('nfcID')
@@ -283,13 +284,15 @@ function BuildTag( {navigation, route} ) {
             }).then(() => {
                 writeTagID(id) 
             }, () => {
-                error = 'Failed to update New Id on firestore.';
+                var error = 'Failed to update New Id on firestore.';
                 setModalContent(error);
+                setSelectedOption(null);
             });
     }
 
     //firebase function
     function acquireNewestID() {
+        setConfirmRewrite(false);
         firestore()
             .collection('Tools')
             .doc('nfcID')
@@ -300,8 +303,9 @@ function BuildTag( {navigation, route} ) {
                 console.log(id + '\n object type:' + typeof id);
                 updateNewestID(id);
             }, () => {
-                error ='Failed to acquire New Id from firestore.';
+                var error ='Failed to acquire New Id from firestore.';
                 setModalContent(error);
+                setSelectedOption(null);
             })
     }
 
@@ -313,22 +317,24 @@ function BuildTag( {navigation, route} ) {
             .update({
                 'nfcID': id,
             }).then(() => {
-                error = 'Tag Scanned Succesfully!'
+                var error = 'Tag Scanned Succesfully!'
                 setModalContent(error);
+                setSelectedOption(null);
             }, () => {
-                error = 'Failed to store id to NFC Tag.'
+                var error = 'Failed to store id to NFC Tag.'
                 setModalContent(error);
+                setSelectedOption(null);
             });
     }
 
     //nfc function
     async function writeTagID(id) {
-        nfcID = id;
-        error = 'No Error';
+        var nfcID = id;
+        var error = 'No Error';
 
         if(nfcID == '' || nfcID == null) {
-            setSelectedOption(null);
             setModalContent('Failed to retrieve newest ID from database.');
+            setSelectedOption(null);
             //logBuildEvent();
         }
 
@@ -343,14 +349,18 @@ function BuildTag( {navigation, route} ) {
                 .writeNdefMessage(bytes)
                 result = true
                 setSelectedOption(null);
-                setModalContent('Scanned Succesfully')
+                setModalContent('Scanned Successfully');
+                await NfcManager.ndefHandler
+                .makeReadOnly()
             } else {
-                error = 'Failed to encode tag ID.'
+                error = 'Failed to encode tag ID.';
                 setModalContent(error);
+                setSelectedOption(null);
             }
         } catch (ex) {
             error = 'NFC Scan Failed: ' + ex ;
             setModalContent(error);
+            setSelectedOption(null);
         } finally {
             NfcManager.cancelTechnologyRequest();
         }
@@ -358,6 +368,39 @@ function BuildTag( {navigation, route} ) {
         storeNFCID(id);
     }
 
+    //nfc function
+    async function readNdef() {
+        var nfcTag = '';
+        try {
+          // register for the NFC tag with NDEF in it
+          await NfcManager.requestTechnology(NfcTech.Ndef);
+          // the resolved tag object will contain `ndefMessage` property
+          const tag = await NfcManager.getTag();
+          console.warn(
+            'Tag found',
+            Ndef.text.decodePayload(tag.ndefMessage[0].payload),
+          );
+            nfcTag = Ndef.text.decodePayload(tag.ndefMessage[0].payload);
+        } catch (ex) {
+          console.warn('Oops!', ex);
+        } finally {
+          // stop the nfc scanning
+          NfcManager.cancelTechnologyRequest();
+        }
+        return nfcTag;
+    }
+
+    function checkNFCTag() {
+        var message = readNdef();
+        if(message.length == 6 && !isNaN(message)){
+            setModalContent('This NFC Tag already has an ID, push Scan Tag again to rewrite.');
+            setConfirmRewrite(true);
+        }
+        else {
+            acquireNewestID();
+        }
+    }
+  
     const isDarkMode = useColorScheme() === 'dark';
   
     const backgroundStyle = {
@@ -403,9 +446,24 @@ function BuildTag( {navigation, route} ) {
                                 title="Close"
                                 onPress={handleModal}
                             />
-                        </View> :
+                        </View> : 
+                        confirmRewrite == false ?
                         <View>
                             <Text style={styles.modalText}>{modalContent}</Text>
+                            <Text style={styles.modalText}>Name: {selectedOption.first} {selectedOption.last}</Text>
+                            <Text style={styles.modalText}>Email: {selectedOption.email}</Text>
+                            <Text style={styles.modalText}>Phone: {selectedOption.phone}</Text>
+                            <Button
+                                title="Scan Tag"
+                                onPress={checkNFCTag}
+                            />
+                            <Button
+                                title="Close"
+                                onPress={handleModal}
+                            />
+                        </View> :
+                        <View>
+                        <Text style={styles.modalText}>{modalContent}</Text>
                             <Text style={styles.modalText}>Name: {selectedOption.first} {selectedOption.last}</Text>
                             <Text style={styles.modalText}>Email: {selectedOption.email}</Text>
                             <Text style={styles.modalText}>Phone: {selectedOption.phone}</Text>
