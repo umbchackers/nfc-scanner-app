@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-community/checkbox": "^0.5.12",
     "@react-native-firebase/app": "^15.4.0",
     "@react-native-firebase/firestore": "^15.4.0",
     "@react-navigation/native": "^6.0.12",

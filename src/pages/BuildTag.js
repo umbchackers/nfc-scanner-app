@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -12,11 +12,13 @@ import {
   Modal,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import firestore from '@react-native-firebase/firestore';
-import NfcManager, {NfcTech, Ndef} from 'react-native-nfc-manager';
+import FirebaseManager from '../FirebaseManager';
+import NfcTagManager from '../NfcTagManager';
+import styles from '../assets/StyleSheets';
 
-function BuildTag( {navigation, route} ) {
+function BuildTag( {route, navigation} ) {
   
+    const userProfile = route.params;
     const [queryFirstName, setQueryFirstName] = useState('');
     const [queryLastName, setQueryLastName] = useState('');
     const [queryEmail, setQueryEmail] = useState('');
@@ -24,10 +26,12 @@ function BuildTag( {navigation, route} ) {
     const [foundOptions, setFoundOptions] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
     const [modalContent, setModalContent] = useState('');
-    const [confirmRewrite, setConfirmRewrite] = useState(true);
+    const [lockTagReady, setLockTagReady] = useState(false);
 
     function handleModal() {
         setModalContent('');
+        setSelectedOption(null);
+        setLockTagReady(false);
     }
 
     function handleOptionSelect(option) {
@@ -35,369 +39,94 @@ function BuildTag( {navigation, route} ) {
         setModalContent('User Selected: ');
     }
 
-    //firebase function
-    function handleQuerySearch() {
-        if (queryFirstName != '' && queryLastName != '' && queryEmail != '' && queryPhone != '') {
-            setQueryFirstName(queryFirstName.toLowerCase()); setQueryLastName(queryLastName.toLowerCase()); setQueryEmail(queryEmail.toLowerCase());
-            firestore()
-            .collection('Participants')
-            .where('first', '==', queryFirstName.toLowerCase()).where('last', '==', queryLastName.toLowerCase()).where('email', '==', queryEmail.toLowerCase()).where('phone', '==', queryPhone)
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text ='Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryFirstName != '' && queryLastName != '' && queryEmail != '') {
-            setQueryFirstName(queryFirstName.toLowerCase()); setQueryLastName(queryLastName.toLowerCase()); setQueryEmail(queryEmail.toLowerCase);
-            firestore()
-            .collection('Participants')
-            .where('first', '==', queryFirstName.toLowerCase()).where('last', '==', queryLastName.toLowerCase()).where('email', '==', queryEmail.toLowerCase())
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryFirstName != '' && queryLastName != '' && queryPhone != '') {
-            setQueryFirstName(queryFirstName.toLowerCase()); setQueryLastName(queryLastName.toLowerCase());
-            firestore()
-            .collection('Participants')
-            .where('first', '==', queryFirstName.toLowerCase()).where('last', '==', queryLastName.toLowerCase()).where('phone', '==', queryPhone)
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryFirstName != '' && queryEmail != '' && queryPhone != '') {
-            setQueryFirstName(queryFirstName.toLowerCase()); setQueryEmail(queryEmail.toLowerCase);
-            firestore()
-            .collection('Participants')
-            .where('first', '==', queryFirstName.toLowerCase()).where('email', '==', queryEmail.toLowerCase()).where('phone', '==', queryPhone)
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryLastName != '' && queryEmail != '' && queryPhone != '') {
-            setQueryLastName(queryLastName.toLowerCase()); setQueryEmail(queryEmail.toLowerCase);
-            firestore()
-            .collection('Participants')
-            .where('last', '==', queryLastName.toLowerCase()).where('email', '==', queryEmail.toLowerCase()).where('phone', '==', queryPhone)
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryFirstName != '' && queryLastName != '') {
-            setQueryFirstName(queryFirstName.toLowerCase()); setQueryLastName(queryLastName.toLowerCase());
-            firestore()
-            .collection('Participants')
-            .where('first', '==', queryFirstName.toLowerCase()).where('last', '==', queryLastName.toLowerCase())
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryFirstName != '' && queryEmail != '') {
-            setQueryFirstName(queryFirstName.toLowerCase()); setQueryEmail(queryEmail.toLowerCase);
-            firestore()
-            .collection('Participants')
-            .where('first', '==', queryFirstName.toLowerCase()).where('email', '==', queryEmail.toLowerCase())
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryFirstName != '' && queryPhone != '') {
-            setQueryFirstName(queryFirstName.toLowerCase());
-            firestore()
-            .collection('Participants')
-            .where('first', '==', queryFirstName.toLowerCase()).where('phone', '==', queryPhone)
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryLastName != '' && queryEmail != '') {
-            setQueryLastName(queryLastName.toLowerCase()); setQueryEmail(queryEmail.toLowerCase);
-            firestore()
-            .collection('Participants')
-            .where('last', '==', queryLastName.toLowerCase()).where('email', '==', queryEmail.toLowerCase())
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryLastName != '' && queryPhone != '') {
-            setQueryLastName(queryLastName.toLowerCase());
-            firestore()
-            .collection('Participants')
-            .where('last', '==', queryLastName.toLowerCase()).where('phone', '==', queryPhone)
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryEmail != '' && queryPhone != '') {
-            setQueryEmail(queryEmail.toLowerCase);
-            firestore()
-            .collection('Participants')
-            .where('email', '==', queryEmail.toLowerCase()).where('phone', '==', queryPhone)
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryFirstName != '') {
-            setQueryFirstName(queryFirstName.toLowerCase());
-            firestore()
-            .collection('Participants')
-            .where('first', '==', queryFirstName.toLowerCase())
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryLastName != '') {
-            setQueryLastName(queryLastName.toLowerCase());
-            firestore()
-            .collection('Participants')
-            .where('last', '==', queryLastName.toLowerCase())
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryEmail != '') {
-            setQueryEmail(queryEmail.toLowerCase);
-            firestore()
-            .collection('Participants')
-            .where('email', '==', queryEmail.toLowerCase())
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
-        } else if (queryPhone != '') {
-            firestore()
-            .collection('Participants')
-            .where('phone', '==', queryPhone)
-            .get().then(collectionSnapshot => {
-                if(collectionSnapshot.size <= 15) {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users'
-                    setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-                    setModalContent(text);
-                } else {
-                    var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
-                    setModalContent(text);
-                }
-            })
+    async function beginQuerySearch(){
+        collectionSnapshot = await FirebaseManager.handleQuerySearch(queryFirstName, queryLastName, queryEmail, queryPhone)
+        
+        if(collectionSnapshot == 'No query provided.') {
+            setModalContent(collectionSnapshot);
+        } else if(collectionSnapshot == null){
+            text = 'Failed to acquire query results.';
+            setModalContent(text);
+        } else if(collectionSnapshot.size <= 15) {
+            var text ='Found ' + collectionSnapshot.size + ' available users'
+            setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
+            setModalContent(text);
         } else {
-            setModalContent('No query provided.');
+            var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+            setModalContent(text);
         }
     }
 
-    //firebase function
-    function getNFCID(documentSnapshot) {
-        var id = documentSnapshot.get('latestID');
-        return id;
-    }
-
-    //firebase function
-    function updateNewestID(id) {
-        var result = false;
-        var number = Number(id) + 1;
-        firestore()
-            .collection('Tools')
-            .doc('nfcID')
-            .set({
-                latestID: number.toString()
-            }).then(() => {
-                writeTagID(id) 
-            }, () => {
-                var error = 'Failed to update New Id on firestore.';
-                setModalContent(error);
-                setSelectedOption(null);
-            });
-    }
-
-    //firebase function
-    function acquireNewestID() {
-        setConfirmRewrite(false);
-        firestore()
-            .collection('Tools')
-            .doc('nfcID')
-            .get()
-            .then(documentSnapshot => getNFCID(documentSnapshot))
-            .then(latestID => {
-                const id = latestID;
-                console.log(id + '\n object type:' + typeof id);
-                updateNewestID(id);
-            }, () => {
-                var error ='Failed to acquire New Id from firestore.';
-                setModalContent(error);
-                setSelectedOption(null);
-            })
-    }
-
-    //firebase function
-    function storeNFCID(id) {
-        firestore()
-            .collection('Participants')
-            .doc(selectedOption.id)
-            .update({
-                'nfcID': id,
-            }).then(() => {
-                var error = 'Tag Scanned Succesfully!'
-                setModalContent(error);
-                setSelectedOption(null);
-            }, () => {
-                var error = 'Failed to store id to NFC Tag.'
-                setModalContent(error);
-                setSelectedOption(null);
-            });
-    }
-
-    //nfc function
-    async function writeTagID(id) {
-        var nfcID = id;
-        var error = 'No Error';
-
-        if(nfcID == '' || nfcID == null) {
-            setModalContent('Failed to retrieve newest ID from database.');
-            setSelectedOption(null);
-            //logBuildEvent();
-        }
-
-        let result = false;
-        try {
-            await NfcManager.requestTechnology(NfcTech.Ndef);
-
-            const bytes = Ndef.encodeMessage([Ndef.textRecord(nfcID)]);
-
-            if(bytes) {
-                await NfcManager.ndefHandler
-                .writeNdefMessage(bytes)
-                result = true
-                setSelectedOption(null);
-                setModalContent('Scanned Successfully');
-                await NfcManager.ndefHandler
-                .makeReadOnly()
-            } else {
-                error = 'Failed to encode tag ID.';
-                setModalContent(error);
-                setSelectedOption(null);
+    async function checkNFCTag() {
+        return await new Promise(async (resolve) => {
+            var message = '';
+            setModalContent("Awaiting Scan to check tag...");
+            message = await NfcTagManager.readNdef();
+            if(message != ''){
+                message = 'This NFC Tag already has content: ' + message;
+                setModalContent(message);
             }
-        } catch (ex) {
-            error = 'NFC Scan Failed: ' + ex ;
-            setModalContent(error);
+            else {
+                message = 'This NFC Tag is blank.';
+                setModalContent(message);
+            }
+    });
+    }
+
+    async function handleLockTag() {
+        error = await NfcTagManager.lockNFCTag(setModalContent);
+
+        if(error == 'No Error'){
+            //logBuildEvent()
             setSelectedOption(null);
-        } finally {
-            NfcManager.cancelTechnologyRequest();
+            setLockTagReady(false);
+            setModalContent("Succesfully locked tag.")
+            return;
+        } else {
+            setModalContent(error);
         }
-
-        storeNFCID(id);
     }
 
-    //nfc function
-    async function readNdef() {
-        var nfcTag = '';
-        try {
-          // register for the NFC tag with NDEF in it
-          await NfcManager.requestTechnology(NfcTech.Ndef);
-          // the resolved tag object will contain `ndefMessage` property
-          const tag = await NfcManager.getTag();
-          console.warn(
-            'Tag found',
-            Ndef.text.decodePayload(tag.ndefMessage[0].payload),
-          );
-            nfcTag = Ndef.text.decodePayload(tag.ndefMessage[0].payload);
-        } catch (ex) {
-          console.warn('Oops!', ex);
-        } finally {
-          // stop the nfc scanning
-          NfcManager.cancelTechnologyRequest();
-        }
-        return nfcTag;
-    }
+    async function handleBuildNFC() {
+        
+        const tagNumber = await FirebaseManager.acquireNewestID();
+        
+        result = await FirebaseManager.updateNewestID(tagNumber, setModalContent);
 
-    function checkNFCTag() {
-        var message = readNdef();
-        if(message.length == 6 && !isNaN(message)){
-            setModalContent('This NFC Tag already has an ID, push Scan Tag again to rewrite.');
-            setConfirmRewrite(true);
+        if(tagNumber == null || !result) {
+            if(tagNumber == null) {
+                message = 'Failed to acquire new ID from the server.';
+                setModalContent(message);
+            } else if (!result) {
+                message = 'Failed to update new ID to the server';
+                setModalContent(message);
+            }
+            FirebaseManager.logBuildEvent('build', 'fail', userProfile.username, selectedOption, message);
+            setSelectedOption(null);
+            return;
         }
-        else {
-            acquireNewestID();
+
+        error = await NfcTagManager.writeTagID(tagNumber, setModalContent);
+
+        if(error != 'No Error') {
+            FirebaseManager.logBuildEvent('build', 'fail', userProfile.username, selectedOption, error);
+            setSelectedOption(null);
+            return;
+        }
+
+        error = await FirebaseManager.storeNFCID(selectedOption.id, tagNumber);
+
+        if(error != 'No Error'){
+            FirebaseManager.logBuildEvent('build', 'fail', userProfile.username, selectedOption, error);
+            setModalContent(error)
+            setSelectedOption(null);
+            return;
+        } else{
+            selectedOption.nfcID = tagNumber;
+            FirebaseManager.logBuildEvent('build', 'success', userProfile.username, selectedOption, error);
+            setFoundOptions([]);
+            setLockTagReady(true);
+            setModalContent('Tag Succesfully Built.');
         }
     }
   
@@ -416,22 +145,26 @@ function BuildTag( {navigation, route} ) {
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           style={backgroundStyle}>
+            <Text style={styles.navbarHeaderText}>Welcome back, {userProfile.username}</Text>
+            <View style={styles.navbarView}>
+              <Button
+                  title="Home"
+                  onPress={() => {navigation.navigate('Home', { username: userProfile.username })}}
+              />
+              <Button
+                  title="Scan Tag"
+                  onPress={() => {navigation.navigate('ScanTag', { username: userProfile.username })}}
+              />
+              <Button
+                  title="Audit Log"
+                  onPress={() => {navigation.navigate('AuditLog', { username: userProfile.username })}}
+              />
+            </View>
           <View>
-            <Text>Build Tag</Text>
-            <Button
-                title="Home"
-                onPress={() => {navigation.navigate('Home')}}
+            <Button 
+                title="Check NFC Tag"
+                onPress={checkNFCTag}
             />
-            <Button
-                title="Scan Tag"
-                onPress={() => {navigation.navigate('ScanTag')}}
-            />
-            <Button
-                title="Audit Log"
-                onPress={() => {navigation.navigate('AuditLog')}}
-            />
-          </View>
-          <View>
             <Modal
                 transparent={true}
                 visible={modalContent != ''}
@@ -446,8 +179,21 @@ function BuildTag( {navigation, route} ) {
                                 title="Close"
                                 onPress={handleModal}
                             />
+                        </View> : lockTagReady ?
+                        <View>
+                            <Text style={styles.modalText}>{modalContent}</Text>
+                            <Text style={styles.modalText}>Name: {selectedOption.first} {selectedOption.last}</Text>
+                            <Text style={styles.modalText}>Email: {selectedOption.email}</Text>
+                            <Text style={styles.modalText}>Phone: {selectedOption.phone}</Text>
+                            <Button
+                                title="Lock Tag"
+                                onPress={handleLockTag}
+                            />
+                            <Button
+                                title="Close"
+                                onPress={handleModal}
+                            />
                         </View> : 
-                        confirmRewrite == false ?
                         <View>
                             <Text style={styles.modalText}>{modalContent}</Text>
                             <Text style={styles.modalText}>Name: {selectedOption.first} {selectedOption.last}</Text>
@@ -455,21 +201,7 @@ function BuildTag( {navigation, route} ) {
                             <Text style={styles.modalText}>Phone: {selectedOption.phone}</Text>
                             <Button
                                 title="Scan Tag"
-                                onPress={checkNFCTag}
-                            />
-                            <Button
-                                title="Close"
-                                onPress={handleModal}
-                            />
-                        </View> :
-                        <View>
-                        <Text style={styles.modalText}>{modalContent}</Text>
-                            <Text style={styles.modalText}>Name: {selectedOption.first} {selectedOption.last}</Text>
-                            <Text style={styles.modalText}>Email: {selectedOption.email}</Text>
-                            <Text style={styles.modalText}>Phone: {selectedOption.phone}</Text>
-                            <Button
-                                title="Scan Tag"
-                                onPress={acquireNewestID}
+                                onPress={handleBuildNFC}
                             />
                             <Button
                                 title="Close"
@@ -502,7 +234,7 @@ function BuildTag( {navigation, route} ) {
             />
             <Button
                 title="Run Search"
-                onPress={handleQuerySearch}
+                onPress={beginQuerySearch}
             />
           </View>
           {foundOptions.map(option => {
@@ -521,31 +253,5 @@ function BuildTag( {navigation, route} ) {
       </SafeAreaView>
     );
   };
-
-  const styles = StyleSheet.create({
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22
-    },
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 5,
-        alignItems: "center",
-    },
-    modalText: {
-        color: "black"
-    },
-    optionView: {
-        marginTop: 10,
-        backgroundColor: "grey",
-        borderRadius: 20,
-        padding: 5,
-        alignItems: "center",
-    }
-  })
   
   export default BuildTag;

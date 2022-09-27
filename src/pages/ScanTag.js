@@ -9,62 +9,122 @@ import {
   View,
   Button,
   Modal,
+  TextInput,
 } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import firestore from '@react-native-firebase/firestore';
-import NfcManager, {NfcTech, Ndef} from 'react-native-nfc-manager';
+import NfcTagManager from '../NfcTagManager';
+import FirebaseManager from '../FirebaseManager';
+import styles from '../assets/StyleSheets';
 
 function ScanTag({navigation, route}) {
+
+  const userProfile = route.params;
   const [manualScan, setManualScan] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalContent, setModalContent] = useState('');
+  const [queryFirstName, setQueryFirstName] = useState('');
+  const [queryLastName, setQueryLastName] = useState('');
+  const [queryEmail, setQueryEmail] = useState('');
+  const [queryPhone, setQueryPhone] = useState('');
+  const [queryTagNumber, setQueryTagNumber] = useState('');
+  const [foundOptions, setFoundOptions] = useState([]);
 
   function handleModal() {
     setModalContent('');
   }
 
-  function ScanUserTag() {
-    var nfcTag = readNdef();
-
-    if (nfcTag == undefined){
-        setModalContent('Tag is empty');
-    }
-
-    searchNFCTag(nfcTag);
+  function enableManualScanning() {
+    setManualScan(true);
+    setSelectedUser(null);
   }
 
-  function searchNFCTag(id) {
-    firestore()
-      .collection('Participants')
-      .where('nfcID', '==', id)
-      .get().then(querySnapshot => {
-          setSelectedUser(querySnapshot.docs[0]);
-          if(selectedUser == undefined || selectedUser == null){
-            var message = 'No person found with id ' + id.toString();
-            setModalContent(message);
-          }
-      });
+  function handleUpdateSelectedUserFood(name, value) {
+    setSelectedUser(prevState => ({
+      ...prevState,
+      participation: {
+        ...prevState.participation,
+        food: {
+          ...prevState.participation.food,
+          [name]: !value
+        }
+      }
+    }));
   }
 
-  async function readNdef() {
-    var nfcTag = '';
-    try {
-      // register for the NFC tag with NDEF in it
-      await NfcManager.requestTechnology(NfcTech.Ndef);
-      // the resolved tag object will contain `ndefMessage` property
-      const tag = await NfcManager.getTag();
-      console.warn(
-        'Tag found',
-        Ndef.text.decodePayload(tag.ndefMessage[0].payload),
-      );
-        nfcTag = Ndef.text.decodePayload(tag.ndefMessage[0].payload);
-    } catch (ex) {
-      console.warn('Oops!', ex);
-    } finally {
-      // stop the nfc scanning
-      NfcManager.cancelTechnologyRequest();
+  function handleUpdateSelectedUserSwag(name, value) {
+    setSelectedUser(prevState => ({
+      ...prevState,
+      participation: {
+        ...prevState.participation,
+        swag: {
+          ...prevState.participation.swag,
+          [name]: !value
+        }
+      }
+    }));
+  }
+
+  function handleUpdateSelectedUserWorkshops(name, value) {
+    setSelectedUser(prevState => ({
+      ...prevState,
+      participation: {
+        ...prevState.participation,
+        workshops: {
+          ...prevState.participation.workshops,
+          [name]: !value
+        }
+      }
+    }));
+  }
+
+  async function beginQuerySearch() {
+    collectionSnapshot = await FirebaseManager.handleQuerySearch(queryFirstName, queryLastName, queryEmail, queryPhone, queryTagNumber)
+    
+    if(collectionSnapshot == 'No query provided.') {
+        setModalContent(collectionSnapshot);
+    } else if(collectionSnapshot == null){
+        text = 'Failed to acquire query results.';
+        setModalContent(text);
+    } else if(collectionSnapshot.size <= 15) {
+        var text ='Found ' + collectionSnapshot.size + ' available users'
+        setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
+        setModalContent(text);
+    } else {
+        var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
+        setModalContent(text);
     }
-    return nfcTag;
+  }
+
+  async function handleSubmitInfo() {
+    result = await FirebaseManager.submitUserChanges(selectedUser);
+    setModalContent(result);
+    if(result != 'User Succesfully Updated.') {
+      FirebaseManager.logBuildEvent('scan', 'fail', userProfile.username, selectedUser, result);
+    }
+    else {
+      FirebaseManager.logBuildEvent('scan', 'success', userProfile.username, selectedUser, result);
+    }
+  }
+
+  async function ScanUserTag() {
+    setManualScan(false);
+    setModalContent("Awaiting Scan to check tag...");
+    tag = await NfcTagManager.readNdef();
+
+    if(tag == '' || tag == null || tag == "undefined"){
+      setModalContent('This NFC Tag is blank.');
+      return;
+    }
+    result = await FirebaseManager.searchNFCTag(tag);  
+    
+    if(result == false){
+      setModalContent('No profile found from this tag.');
+      return;
+    }
+
+    setSelectedUser(result);
+    setModalContent("Profile Found.");
   }
 
   const isDarkMode = useColorScheme() === 'dark';
@@ -82,57 +142,155 @@ function ScanTag({navigation, route}) {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <View>
-          <Text>Scan Tag</Text>
-          <Button
-            title="Build Tag"
-            onPress={() => {
-              navigation.navigate('BuildTag');
-            }}
-          />
-          <Button
-            title="Home"
-            onPress={() => {
-              navigation.navigate('Home');
-            }}
-          />
-          <Button
-            title="Audit Log"
-            onPress={() => {
-              navigation.navigate('AuditLog');
-            }}
-          />
+        <Text style={styles.navbarHeaderText}>Welcome back, {userProfile.username}</Text>
+        <View style={styles.navbarView}>
+            <Button
+                title="Home"
+                onPress={() => {navigation.navigate('Home', { username: userProfile.username })}}
+            />
+            <Button
+                title="Build Tag"
+                onPress={() => {navigation.navigate('BuildTag', { username: userProfile.username })}}
+            />
+            <Button
+                title="Audit Log"
+                onPress={() => {navigation.navigate('AuditLog', { username: userProfile.username })}}
+            />
         </View>
         <Modal
-          transparent={true}
-          visible={modalContent != ''}
+              transparent={true}
+              visible={modalContent != ''}
         >
-          <Text>{modalContent}</Text>
-          <Button
-            title = "Close"
-            onPress = {handleModal}
-          />
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{modalContent}</Text>
+              <Button
+                title = "Close"
+                onPress = {handleModal}
+              />
+            </View>
+          </View>
         </Modal>
         <Button
           title = "Scan Tag"
           onPress = {ScanUserTag}
         />
-        <Text>Or</Text>
+        <Text style={styles.modalText}>Or</Text>
         <Button
-          title = "Scan Use Manually"
-          onPress={setManualScan}
-          value = {true}
+          title = "Scan User Manually"
+          onPress={enableManualScanning}
         />
+        {manualScan ?
+        <View>
+          <TextInput
+                onChangeText={setQueryFirstName}
+                value={queryFirstName}
+                placeholder="First Name"
+            />
+            <TextInput
+                onChangeText={setQueryLastName}
+                value={queryLastName}
+                placeholder="Last Name"
+            />
+            <TextInput
+                onChangeText={setQueryEmail}
+                value={queryEmail}
+                placeholder="Email Address"
+            />
+            <TextInput
+                onChangeText={setQueryPhone}
+                value={queryPhone}
+                placeholder="Phone Number (No dashes or spaces)"
+            />
+            <TextInput
+                onChangeText={setQueryTagNumber}
+                value={queryTagNumber}
+                placeholder="Tag Number"
+            />
+            <Button
+                title="Run Search"
+                onPress={beginQuerySearch}
+            />
+            {foundOptions.map(option => {
+            const text = option.first + " " + option.last + ", Email: " + option.email
+            return(
+                <View key={option.id} style={styles.optionView}>
+                    <Button style={styles.modalText}
+                    title={text}
+                    onPress={() => {setSelectedUser(option); setFoundOptions([]); setManualScan(false);}}
+                    />
+                </View>
+            );
+          })}
+        </View> :
+        <View>
+
+        </View>}
         {selectedUser != null ?
         <View>
-        <Text>First Name: {selectedUser.first}</Text>
-        <Text>Last Name: {selectedUser.last}</Text>
-        <Text>Email: {selectedUser.email}</Text>
-        <Text>Phone Number: {selectedUser.phone}</Text>
+          <Text>First Name: {selectedUser.first}</Text>
+          <Text>Last Name: {selectedUser.last}</Text>
+          <Text>Email: {selectedUser.email}</Text>
+          <Text>Phone Number: {selectedUser.phone}</Text>
+          <Text>Tag Number: {selectedUser.nfcID}</Text>
+          <View>
+            {
+              Object.keys(selectedUser.participation.food).map((key) => {
+                let value = selectedUser.participation.food[key]
+                return(
+                  <View key={key}>
+                    <Text>{key}
+                    <CheckBox
+                      disabled = {false}
+                      value = {value}
+                      onValueChange = {() => handleUpdateSelectedUserFood(key, value)}
+                    />
+                    </Text>
+                  </View>
+                );
+            })
+            }
+            {
+              Object.keys(selectedUser.participation.swag).map((key) => {
+                let value = selectedUser.participation.swag[key]
+                return(
+                  <View key={key}>
+                    <Text>{key}
+                    <CheckBox
+                      disabled = {false}
+                      value = {value}
+                      onValueChange = {() => handleUpdateSelectedUserSwag(key, value)}
+                    />
+                    </Text>
+                  </View>
+                );
+            })
+            }
+            {
+              Object.keys(selectedUser.participation.workshops).map((key) => {
+                let value = selectedUser.participation.workshops[key]
+                return(
+                  <View key={key}>
+                    <Text>{key}
+                    <CheckBox
+                      disabled = {false}
+                      value = {value}
+                      onValueChange = {() => handleUpdateSelectedUserWorkshops(key, value)}
+                    />
+                    </Text>
+                  </View>
+                );
+            })
+            }
+            <Button 
+            title = "Submit Changes"
+            onPress = {() => handleSubmitInfo(selectedUser)}
+            />
+          </View>
         </View>
         :
         <View>
-          
+
         </View>
         }
       </ScrollView>

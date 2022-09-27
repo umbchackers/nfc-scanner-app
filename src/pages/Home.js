@@ -5,46 +5,84 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TextInput,
   useColorScheme,
   View,
   Button,
+  Image,
 } from 'react-native';
 
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import firestore from '@react-native-firebase/firestore';
+import FirebaseManager from '../FirebaseManager';
+import styles from '../assets/StyleSheets'
 
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
  * LTI update could not be added via codemod */
 function Home( {navigation, route} ) {
   
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [userProfile, setuserProfile] = useState('');
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
+    <SafeAreaView>
+      <StatusBar/>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
+      >
         <View>
-            <Text>Home</Text>
-            <Button
-                title="Build Tag"
-                onPress={() => {navigation.navigate('BuildTag')}}
-            />
-            <Button
-                title="Scan Tag"
-                onPress={() => {navigation.navigate('ScanTag')}}
-            />
-            <Button
-                title="Audit Log"
-                onPress={() => {navigation.navigate('AuditLog')}}
-            />
+            { loggedIn ?
+            <View>
+              <Text style={styles.navbarHeaderText}>Welcome back, {userProfile.first_name + " " + userProfile.last_name}</Text>
+              <View style={styles.navbarView}>
+                <Button
+                    title="Build Tag"
+                    onPress={() => {navigation.navigate('BuildTag', { username: userProfile.first_name + " " + userProfile.last_name })}}
+                />
+                <Button
+                    title="Scan Tag"
+                    onPress={() => {navigation.navigate('ScanTag', { username: userProfile.first_name + " " + userProfile.last_name })}}
+                />
+                <Button
+                    title="Audit Log"
+                    onPress={() => {navigation.navigate('AuditLog', { username: userProfile.first_name + " " + userProfile.last_name })}}
+                />
+              </View>
+              <Image style={styles.homeLogo} source={require('../assets/Doggo_.png')} />
+            </View> :
+            <View>
+              <Image style={styles.homeLogo} source={require('../assets/Doggo_.png')} />
+              <Text style={styles.loginText}>Please login before continuing</Text>
+              <View style={styles.loginWindow}>
+              <TextInput
+                style={styles.loginTextInput}
+                onChangeText={setEmail}
+                value={email}
+                placeholder="Email"
+                placeholderTextColor="#000000"
+              />
+              <TextInput
+                style={styles.loginTextInput}
+                onChangeText={setPassword}
+                value={password}
+                secureTextEntry={true}
+                placeholder="Password"
+                placeholderTextColor="#000000"
+              />
+              </View>
+              <Button
+                style={styles.loginButton}
+                title="Login"
+                onPress={async () => setLoggedIn(await FirebaseManager.logUserIn(email, password, setuserProfile))}
+              />
+            </View>
+            }
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -52,45 +90,3 @@ function Home( {navigation, route} ) {
 };
 
 export default Home;
-
-// {postLists.map((post) => {
-//     return (
-//       <View>
-//       <Text>{post.title}</Text>
-//       <Text>{post.postText}</Text>
-//       </View>
-//     );
-//   })}
-
-//   const [postLists, setPostList] = useState([]);
-
-// function onAddPost() {
-//     console.log('attempting mobile write...');
-//     firestore()
-//     .collection('posts')
-//     .doc()
-//     .set({
-//         postText: 'First attempt at mobile writing',
-//         title: 'Mobile Writing'
-//     })
-//     .then(() => {
-//         console.log('Success!!');
-//     }, (error) => {
-//         console.error(error);
-//     })
-// }
-
-//   useEffect(() => {
-//     firestore()
-//     .collection('posts')
-//     .get()
-//     .then(collectionSnapshot => {
-//         console.log('Total users: ', collectionSnapshot.size);
-//         collectionSnapshot
-//             .forEach(documentSnapshot => {
-//                 console.log('User ID: ', documentSnapshot.id,
-//                     documentSnapshot.data());
-//             });
-//         setPostList(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})))
-//     });
-//   }, [])  
