@@ -286,6 +286,7 @@ class FirebaseManager {
                 .doc(id)
                 .update({
                     'nfcID': tagNumber,
+                    'participation.attending': true,
                 }).then(() => {
                     resolve(error);
                 }, () => {
@@ -321,19 +322,21 @@ class FirebaseManager {
                 .collection('Participants')
                 .doc(selectedUser.id)
                 .update({
+                    'participation.attending': selectedUser.participation.attending,
                     'participation.food.breakfast': selectedUser.participation.food.breakfast,
                     'participation.food.dinner': selectedUser.participation.food.dinner,
                     'participation.food.first_lunch': selectedUser.participation.food.first_lunch,
                     'participation.food.midnight_snack': selectedUser.participation.food.midnight_snack,
                     'participation.food.second_lunch': selectedUser.participation.food.second_lunch,
-                    'participation.swag.swag1': selectedUser.participation.swag.swag1,
-                    'participation.swag.swag2': selectedUser.participation.swag.swag2,
-                    'participation.swag.swag3': selectedUser.participation.swag.swag3,
-                    'participation.swag.swag4': selectedUser.participation.swag.swag4,
                     'participation.workshops.workshop1': selectedUser.participation.workshops.workshop1,
                     'participation.workshops.workshop2': selectedUser.participation.workshops.workshop2,
                     'participation.workshops.workshop3': selectedUser.participation.workshops.workshop3,
                     'participation.workshops.workshop4': selectedUser.participation.workshops.workshop4,
+                    'participation.workshops.workshop5': selectedUser.participation.workshops.workshop5,
+                    'participation.workshops.workshop6': selectedUser.participation.workshops.workshop6,
+                    'participation.workshops.workshop7': selectedUser.participation.workshops.workshop7,
+                    'participation.workshops.workshop8': selectedUser.participation.workshops.workshop8,
+                    'participation.workshops.workshop9': selectedUser.participation.workshops.workshop9,
                 })
                 .then(() => {
                     resolve('User Succesfully Updated.');

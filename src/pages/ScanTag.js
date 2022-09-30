@@ -10,6 +10,7 @@ import {
   Button,
   Modal,
   TextInput,
+  CheckBo
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -34,8 +35,8 @@ function ScanTag({navigation, route}) {
     setModalContent('');
   }
 
-  function enableManualScanning() {
-    setManualScan(true);
+  function toggleManualScanning() {
+    setManualScan(!manualScan);
     setSelectedUser(null);
   }
 
@@ -46,19 +47,6 @@ function ScanTag({navigation, route}) {
         ...prevState.participation,
         food: {
           ...prevState.participation.food,
-          [name]: !value
-        }
-      }
-    }));
-  }
-
-  function handleUpdateSelectedUserSwag(name, value) {
-    setSelectedUser(prevState => ({
-      ...prevState,
-      participation: {
-        ...prevState.participation,
-        swag: {
-          ...prevState.participation.swag,
           [name]: !value
         }
       }
@@ -97,6 +85,7 @@ function ScanTag({navigation, route}) {
   }
 
   async function handleSubmitInfo() {
+    console.log(selectedUser)
     result = await FirebaseManager.submitUserChanges(selectedUser);
     setModalContent(result);
     if(result != 'User Succesfully Updated.') {
@@ -178,10 +167,10 @@ function ScanTag({navigation, route}) {
         <Text style={styles.modalText}>Or</Text>
         <Button
           title = "Scan User Manually"
-          onPress={enableManualScanning}
+          onPress={toggleManualScanning}
         />
         {manualScan ?
-        <View>
+        <View style={styles.queryView}>
           <TextInput
                 onChangeText={setQueryFirstName}
                 value={queryFirstName}
@@ -234,6 +223,18 @@ function ScanTag({navigation, route}) {
           <Text>Phone Number: {selectedUser.phone}</Text>
           <Text>Tag Number: {selectedUser.nfcID}</Text>
           <View>
+            <Text>attending <CheckBox 
+              disabled = {false}
+              value = {selectedUser.participation.attending}
+              onValueChange = {() => setSelectedUser(prevState => ({
+                ...prevState,
+                participation: {
+                  ...prevState.participation,
+                  attending: !prevState.participation.attending
+                }
+              }))
+            }
+            /></Text>
             {
               Object.keys(selectedUser.participation.food).map((key) => {
                 let value = selectedUser.participation.food[key]
@@ -244,22 +245,6 @@ function ScanTag({navigation, route}) {
                       disabled = {false}
                       value = {value}
                       onValueChange = {() => handleUpdateSelectedUserFood(key, value)}
-                    />
-                    </Text>
-                  </View>
-                );
-            })
-            }
-            {
-              Object.keys(selectedUser.participation.swag).map((key) => {
-                let value = selectedUser.participation.swag[key]
-                return(
-                  <View key={key}>
-                    <Text>{key}
-                    <CheckBox
-                      disabled = {false}
-                      value = {value}
-                      onValueChange = {() => handleUpdateSelectedUserSwag(key, value)}
                     />
                     </Text>
                   </View>

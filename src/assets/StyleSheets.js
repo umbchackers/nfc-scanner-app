@@ -57,5 +57,9 @@ export default navbarStyle = StyleSheet.create({
         borderRadius: 20,
         padding: 5,
         alignItems: "center",
+    },
+    queryView: {
+        alignItems: "center",
+        margin: 5,
     }
 });

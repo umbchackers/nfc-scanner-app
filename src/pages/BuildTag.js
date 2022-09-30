@@ -212,30 +212,32 @@ function BuildTag( {route, navigation} ) {
                     </View>
                 </View>
             </Modal>
-            <TextInput
-                onChangeText={setQueryFirstName}
-                value={queryFirstName}
-                placeholder="First Name"
-            />
-            <TextInput
-                onChangeText={setQueryLastName}
-                value={queryLastName}
-                placeholder="Last Name"
-            />
-            <TextInput
-                onChangeText={setQueryEmail}
-                value={queryEmail}
-                placeholder="Email Address"
-            />
-            <TextInput
-                onChangeText={setQueryPhone}
-                value={queryPhone}
-                placeholder="Phone Number (No dashes or spaces)"
-            />
-            <Button
-                title="Run Search"
-                onPress={beginQuerySearch}
-            />
+            <View style={styles.queryView}>
+                <TextInput
+                    onChangeText={setQueryFirstName}
+                    value={queryFirstName}
+                    placeholder="First Name"
+                />
+                <TextInput
+                    onChangeText={setQueryLastName}
+                    value={queryLastName}
+                    placeholder="Last Name"
+                />
+                <TextInput
+                    onChangeText={setQueryEmail}
+                    value={queryEmail}
+                    placeholder="Email Address"
+                />
+                <TextInput
+                    onChangeText={setQueryPhone}
+                    value={queryPhone}
+                    placeholder="Phone Number (No dashes or spaces)"
+                />
+                <Button
+                    title="Run Search"
+                    onPress={beginQuerySearch}
+                />
+            </View>
           </View>
           {foundOptions.map(option => {
             const text = option.first + " " + option.last + ", Email: " + option.email
