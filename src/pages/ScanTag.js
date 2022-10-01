@@ -66,6 +66,19 @@ function ScanTag({navigation, route}) {
     }));
   }
 
+  function handleUpdateSelectedUserSwag(name, value) {
+    setSelectedUser(prevState => ({
+      ...prevState,
+      participation: {
+        ...prevState.participation,
+        swag: {
+          ...prevState.participation.swag,
+          [name]: !value
+        }
+      }
+    }));
+  }
+
   async function beginQuerySearch() {
     collectionSnapshot = await FirebaseManager.handleQuerySearch(queryFirstName, queryLastName, queryEmail, queryPhone, queryTagNumber)
     
@@ -77,7 +90,6 @@ function ScanTag({navigation, route}) {
     } else if(collectionSnapshot.size <= 15) {
         var text ='Found ' + collectionSnapshot.size + ' available users'
         setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-        setModalContent(text);
     } else {
         var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
         setModalContent(text);
@@ -87,12 +99,15 @@ function ScanTag({navigation, route}) {
   async function handleSubmitInfo() {
     console.log(selectedUser)
     result = await FirebaseManager.submitUserChanges(selectedUser);
-    setModalContent(result);
+    
     if(result != 'User Succesfully Updated.') {
       FirebaseManager.logBuildEvent('scan', 'fail', userProfile.username, selectedUser, result);
+      setModalContent(result);
     }
     else {
       FirebaseManager.logBuildEvent('scan', 'success', userProfile.username, selectedUser, result);
+      setSelectedUser(null)
+      ScanUserTag()
     }
   }
 
@@ -113,7 +128,7 @@ function ScanTag({navigation, route}) {
     }
 
     setSelectedUser(result);
-    setModalContent("Profile Found.");
+    setModalContent('');
   }
 
   const isDarkMode = useColorScheme() === 'dark';
@@ -261,6 +276,22 @@ function ScanTag({navigation, route}) {
                       disabled = {false}
                       value = {value}
                       onValueChange = {() => handleUpdateSelectedUserWorkshops(key, value)}
+                    />
+                    </Text>
+                  </View>
+                );
+            })
+            }
+            {
+              Object.keys(selectedUser.participation.swag).map((key) => {
+                let value = selectedUser.participation.swag[key]
+                return(
+                  <View key={key}>
+                    <Text>{key}
+                    <CheckBox
+                      disabled = {false}
+                      value = {value}
+                      onValueChange = {() => handleUpdateSelectedUserSwag(key, value)}
                     />
                     </Text>
                   </View>

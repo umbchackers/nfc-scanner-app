@@ -64,7 +64,7 @@ function Home( {navigation, route} ) {
                 style={styles.loginTextInput}
                 onChangeText={setEmail}
                 value={email}
-                placeholder="Email"
+                placeholder="First Name"
                 placeholderTextColor="#000000"
               />
               <TextInput

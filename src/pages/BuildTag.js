@@ -50,7 +50,7 @@ function BuildTag( {route, navigation} ) {
         } else if(collectionSnapshot.size <= 15) {
             var text ='Found ' + collectionSnapshot.size + ' available users'
             setFoundOptions(collectionSnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id})));
-            setModalContent(text);
+            setModalContent('');
         } else {
             var text = 'Found ' + collectionSnapshot.size + ' available users, please narrow search with more criteria'
             setModalContent(text);
@@ -80,7 +80,11 @@ function BuildTag( {route, navigation} ) {
             //logBuildEvent()
             setSelectedOption(null);
             setLockTagReady(false);
-            setModalContent("Succesfully locked tag.")
+            setModalContent("");
+            setQueryFirstName('');
+            setQueryLastName('');
+            setQueryEmail('');
+            setQueryPhone('');
             return;
         } else {
             setModalContent(error);
@@ -126,7 +130,11 @@ function BuildTag( {route, navigation} ) {
             FirebaseManager.logBuildEvent('build', 'success', userProfile.username, selectedOption, error);
             setFoundOptions([]);
             setLockTagReady(true);
-            setModalContent('Tag Succesfully Built.');
+            setModalContent('Tag Succesfully Built.');  
+            setQueryFirstName('');
+            setQueryLastName('');
+            setQueryEmail('');
+            setQueryPhone('');
         }
     }
   
@@ -193,7 +201,27 @@ function BuildTag( {route, navigation} ) {
                                 title="Close"
                                 onPress={handleModal}
                             />
-                        </View> : 
+                        </View> : selectedOption.underage?
+                        <View>
+                            <Text>-------</Text>
+                            <Text>THIS PERSON IS UNDER AGE</Text>
+                            <Text>-------</Text>
+                            <Text style={styles.modalText}>{modalContent}</Text>
+                            <Text style={styles.modalText}>Name: {selectedOption.first} {selectedOption.last}</Text>
+                            <Text style={styles.modalText}>Email: {selectedOption.email}</Text>
+                            <Text style={styles.modalText}>Phone: {selectedOption.phone}</Text>
+                            <Text>-------</Text>
+                            <Text>THIS PERSON IS UNDER AGE</Text>
+                            <Text>-------</Text>
+                            <Button
+                                title="Scan Tag"
+                                onPress={handleBuildNFC}
+                            />
+                            <Button
+                                title="Close"
+                                onPress={handleModal}
+                            />
+                        </View> :
                         <View>
                             <Text style={styles.modalText}>{modalContent}</Text>
                             <Text style={styles.modalText}>Name: {selectedOption.first} {selectedOption.last}</Text>

@@ -4,6 +4,7 @@ import NfcTagManager from './NfcTagManager';
 class FirebaseManager {
     handleQuerySearch(queryFirstName, queryLastName, queryEmail, queryPhone, queryTagNumber = '') {
         return new Promise((resolve) => {
+            console.log(queryFirstName + " lol " + queryLastName + queryEmail + queryPhone);
             data = null;
             if (queryFirstName != '' && queryLastName != '' && queryEmail != '' && queryPhone != '' && queryTagNumber != '') {
                 data = firestore()
@@ -140,6 +141,7 @@ class FirebaseManager {
                 .collection('Participants')
                 .where('first', '==', queryFirstName.toLowerCase())
                 .get()
+                console.log(data);
             } else if (queryLastName != '') {
                 data = firestore()
                 .collection('Participants')
@@ -328,15 +330,16 @@ class FirebaseManager {
                     'participation.food.first_lunch': selectedUser.participation.food.first_lunch,
                     'participation.food.midnight_snack': selectedUser.participation.food.midnight_snack,
                     'participation.food.second_lunch': selectedUser.participation.food.second_lunch,
-                    'participation.workshops.workshop1': selectedUser.participation.workshops.workshop1,
-                    'participation.workshops.workshop2': selectedUser.participation.workshops.workshop2,
-                    'participation.workshops.workshop3': selectedUser.participation.workshops.workshop3,
-                    'participation.workshops.workshop4': selectedUser.participation.workshops.workshop4,
-                    'participation.workshops.workshop5': selectedUser.participation.workshops.workshop5,
-                    'participation.workshops.workshop6': selectedUser.participation.workshops.workshop6,
-                    'participation.workshops.workshop7': selectedUser.participation.workshops.workshop7,
-                    'participation.workshops.workshop8': selectedUser.participation.workshops.workshop8,
-                    'participation.workshops.workshop9': selectedUser.participation.workshops.workshop9,
+                    'participation.workshops.northrop': selectedUser.participation.workshops.northrop,
+                    'participation.workshops.BAH': selectedUser.participation.workshops.BAH,
+                    'participation.workshops.IEEE': selectedUser.participation.workshops.IEEE,
+                    'participation.workshops.tamoor': selectedUser.participation.workshops.tamoor,
+                    'participation.workshops.nishith': selectedUser.participation.workshops.nishith,
+                    'participation.workshops.tyler': selectedUser.participation.workshops.tyler,
+                    'participation.workshops.alina': selectedUser.participation.workshops.alina,
+                    'participation.workshops.david': selectedUser.participation.workshops.david,
+                    'participation.swag.waterbottle': selectedUser.participation.swag.waterbottle,
+                    'participation.swag.shirt': selectedUser.participation.swag.shirt,
                 })
                 .then(() => {
                     resolve('User Succesfully Updated.');
