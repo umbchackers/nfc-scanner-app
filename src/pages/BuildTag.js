@@ -204,15 +204,15 @@ function BuildTag( {route, navigation} ) {
                         </View> : selectedOption.underage?
                         <View>
                             <Text>-------</Text>
-                            <Text>THIS PERSON IS UNDER AGE</Text>
-                            <Text>-------</Text>
+                            <Text style={styles.modalText}>THIS PERSON IS UNDER AGE</Text>
+                            <Text style={styles.modalText}>-------</Text>
                             <Text style={styles.modalText}>{modalContent}</Text>
                             <Text style={styles.modalText}>Name: {selectedOption.first} {selectedOption.last}</Text>
                             <Text style={styles.modalText}>Email: {selectedOption.email}</Text>
                             <Text style={styles.modalText}>Phone: {selectedOption.phone}</Text>
-                            <Text>-------</Text>
-                            <Text>THIS PERSON IS UNDER AGE</Text>
-                            <Text>-------</Text>
+                            <Text style={styles.modalText}>-------</Text>
+                            <Text style={styles.modalText}>THIS PERSON IS UNDER AGE</Text>
+                            <Text style={styles.modalText}>-------</Text>
                             <Button
                                 title="Scan Tag"
                                 onPress={handleBuildNFC}
